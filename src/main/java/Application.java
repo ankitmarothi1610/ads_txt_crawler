@@ -29,10 +29,11 @@ public class Application {
                     connection.close();
                 }
             } catch (Exception sqe) {
-                sqe.printStackTrace();;
+                sqe.printStackTrace();
             }
         }
     }
+
     public static void main(String args[]) {
         Application app = new Application();
         app.tesDBConnection();
