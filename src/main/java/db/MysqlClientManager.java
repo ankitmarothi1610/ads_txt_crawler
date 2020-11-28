@@ -1,11 +1,11 @@
-package data;
+package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MysqlClientManager {
-    public Connection createConnection() {
+    public static Connection createConnection() {
         Connection connection = null;
         String baseurl = "jdbc:mysql://localhost/";
         String database = "ads";

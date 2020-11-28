@@ -1,4 +1,6 @@
-import data.MysqlClientManager;
+import db.MysqlClientManager;
+import services.PublisherService;
+import services.impl.PublisherServiceImpl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,5 +39,7 @@ public class Application {
     public static void main(String args[]) {
         Application app = new Application();
         app.tesDBConnection();
+        PublisherService publisherService = new PublisherServiceImpl();
+        publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
     }
 }

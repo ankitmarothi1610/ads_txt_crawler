@@ -1,5 +1,5 @@
 package services;
 
-public class PublisherService {
-
+public interface PublisherService {
+    int addPublishersFromFile(String filename);
 }

@@ -1,7 +1,7 @@
 package models;
 
 public class Publisher {
-    int id;
-    String name;
-    String url;
+    public int id;
+    public String name;
+    public String url;
 }
