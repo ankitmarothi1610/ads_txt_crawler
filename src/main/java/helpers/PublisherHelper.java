@@ -1,5 +1,6 @@
 package helpers;
 
+import com.google.common.base.Strings;
 import models.Publisher;
 
 import javax.xml.transform.Result;
@@ -18,14 +19,7 @@ public class PublisherHelper {
         return sb.toString();
     }
 
-    public static void destroyQueryObjects(PreparedStatement ps, ResultSet rs) {
-        try {
-            if (ps != null)
-                ps.close();
-            if (rs != null)
-                rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public static String getNameFromUrl(String url) {
+        return !Strings.isNullOrEmpty(url) ? url.substring(0, url.indexOf(".")) : null;
     }
 }

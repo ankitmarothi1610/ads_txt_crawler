@@ -3,16 +3,23 @@ package data.impl;
 import data.PublisherDataService;
 import db.MysqlClientManager;
 import models.Publisher;
-import helpers.PublisherHelper;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class PublisherDataServiceImpl implements PublisherDataService {
     Connection connection;
-    public PublisherDataServiceImpl() {
-        connection = MysqlClientManager.createConnection();
+    public PublisherDataServiceImpl()  {
+        try {
+            connection = MysqlClientManager.getConnection();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
     }
+
     public int bulkUpdatePublishers(List<Publisher> publishersList)  {
         PreparedStatement ps = null;
         try {
@@ -29,7 +36,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
-            PublisherHelper.destroyQueryObjects(ps, null);
+            MysqlClientManager.destroyQueryObjects(ps, null);
         }
         return publishersList.size();
     }

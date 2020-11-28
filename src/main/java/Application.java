@@ -10,10 +10,11 @@ import java.sql.Statement;
 public class Application {
     public void tesDBConnection() {
         MysqlClientManager client = new MysqlClientManager();
-        Connection connection = client.createConnection();
+        Connection connection = null;
         Statement stmt = null;
         ResultSet rs = null;
         try {
+          connection = client.getConnection();
           stmt = connection.createStatement();
           rs = stmt.executeQuery("select * from publishers;");
           System.out.print("Successfully connected to the db");
