@@ -16,7 +16,7 @@ public class Application {
         try {
           connection = client.getConnection();
           stmt = connection.createStatement();
-          rs = stmt.executeQuery("select * from publishers;");
+          rs = stmt.executeQuery("select * from ads.publishers;");
           System.out.print("Successfully connected to the db");
         } catch(SQLException sqlException) {
             sqlException.printStackTrace();
@@ -42,5 +42,6 @@ public class Application {
         app.tesDBConnection();
         PublisherService publisherService = new PublisherServiceImpl();
         publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
+        System.exit(0);
     }
 }

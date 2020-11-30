@@ -17,9 +17,9 @@ import java.util.concurrent.*;
 
 public class PublisherServiceImpl implements PublisherService {
     private PublisherDataService publisherDataService;
-    private static final int BATCH_SIZE = 50;
-    private static final int THREAD_POOL_SIZE = 50;
-    private static final int QUEUE_SIZE = 50;
+    private static final int BATCH_SIZE = 1000;
+    private static final int THREAD_POOL_SIZE = 20;
+    private static final int QUEUE_SIZE = 20;
     BlockingQueue<Runnable> blockingQueue;
     PublisherThreadPoolImpl publisherThreadPool;
 
@@ -38,13 +38,7 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     private PublisherThreadPoolImpl createThreadPool() {
-        return new PublisherThreadPoolImpl(
-                THREAD_POOL_SIZE,
-                THREAD_POOL_SIZE,
-                60,
-                TimeUnit.SECONDS,
-                blockingQueue
-        );
+        return new PublisherThreadPoolImpl(THREAD_POOL_SIZE);
     }
 
     private void setThreadPoolRejectionHandler() {
@@ -68,7 +62,6 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     public void addPublishersFromFile(String filename) {
-        int count = 0;
         BufferedReader br = null;
         FileReader fr = null;
         File file  = new File(filename);
@@ -99,33 +92,38 @@ public class PublisherServiceImpl implements PublisherService {
 
     private void processFile(BufferedReader br) {
         int threadCount = 0;
-        List<Publisher> publisherList = new ArrayList<Publisher>(BATCH_SIZE);
         String line;
         try {
+            int i = 0;
+            List<Publisher> publisherList = new ArrayList<Publisher>(BATCH_SIZE);
             while ((line = br.readLine()) != null) {
                 Publisher publisher = createPublisherObj(line);
-                publisherList.add(publisher);
-                if (publisherList.size() == BATCH_SIZE) {
-                    publisherThreadPool.execute(new PublisherThreadImpl(publisherList, threadCount + ""));
-                    System.out.println("Processed a batch of " + publisherList.size() + " records");
-                    publisherList.clear();
+                if (publisher != null) {
+                    publisherList.add(publisher);
+                    i++;
+                }
+                if (i == BATCH_SIZE) {
+                    publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount + ""));
                     threadCount++;
+                    i = 0;
+                    publisherList = new ArrayList<Publisher>(BATCH_SIZE);
 //                    try {
 //                        Thread.sleep(5000);
-//                    } catch (InterruptedException ie) {
+//                    } catch(InterruptedException ie) {
 //                        ie.printStackTrace();
 //                    }
                 }
             }
             if (publisherList.size() > 0) {
-                new PublisherThreadImpl(publisherList, threadCount + "");
-                publisherDataService.bulkUpdatePublishers(publisherList);
-                publisherThreadPool.execute(new PublisherThreadImpl(publisherList, threadCount + ""));
-                System.out.println("Processed a batch of " + publisherList.size() + " records");
+//                new PublisherThreadImpl(publisherList, threadCount + "");
+//                publisherDataService.bulkUpdatePublishers(publisherList);
+                publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount + ""));
                 publisherList.clear();
             }
         } catch (IOException io) {
             io.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,5 +1,6 @@
 package services.impl;
 
+import com.google.common.base.Strings;
 import data.PublisherDataService;
 import data.impl.PublisherDataServiceImpl;
 import models.Publisher;
@@ -23,6 +24,6 @@ public class PublisherThreadImpl implements Runnable {
     public void run() {
         System.out.println(name + ": Processing a batch of " + publisherList.size() + " records");
         publisherDataService.bulkUpdatePublishers(publisherList);
-        System.out.println(name + "Processed a batch of " + publisherList.size() + " records");
+        System.out.println("Processed a batch of " + publisherList.size() + " records");
     }
 }
