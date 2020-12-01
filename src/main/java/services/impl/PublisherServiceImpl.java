@@ -16,15 +16,13 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class PublisherServiceImpl implements PublisherService {
-    private PublisherDataService publisherDataService;
     private static final int BATCH_SIZE = 1000;
-    private static final int THREAD_POOL_SIZE = 20;
-    private static final int QUEUE_SIZE = 20;
+    private static final int THREAD_POOL_SIZE = 100;
+    private static final int QUEUE_SIZE = 1000;
     BlockingQueue<Runnable> blockingQueue;
     PublisherThreadPoolImpl publisherThreadPool;
 
     public PublisherServiceImpl() {
-        publisherDataService = new PublisherDataServiceImpl();
         blockingQueue =  new ArrayBlockingQueue<Runnable>(QUEUE_SIZE);
         printWarmUpDetails();
         publisherThreadPool = createThreadPool();
@@ -47,7 +45,7 @@ public class PublisherServiceImpl implements PublisherService {
             public void rejectedExecution(Runnable r,
                                           ThreadPoolExecutor executor) {
                 System.out.println("PublisherThreadTask Rejected : "
-                        + ((PublisherThreadImpl) r).getName());
+                        + ((PublisherCallableImpl) r).getName());
                 System.out.println("Waiting for a second !!");
                 try {
                     Thread.sleep(1000);
@@ -55,7 +53,7 @@ public class PublisherServiceImpl implements PublisherService {
                     e.printStackTrace();
                 }
                 System.out.println("Thread added once again time : "
-                        + ((PublisherThreadImpl) r).getName());
+                        + ((PublisherCallableImpl) r).getName());
                 executor.execute(r);
             }
         });
@@ -96,6 +94,7 @@ public class PublisherServiceImpl implements PublisherService {
         try {
             int i = 0;
             List<Publisher> publisherList = new ArrayList<Publisher>(BATCH_SIZE);
+            List<Future<Integer>> futureList = new ArrayList<>();
             while ((line = br.readLine()) != null) {
                 Publisher publisher = createPublisherObj(line);
                 if (publisher != null) {
@@ -103,27 +102,29 @@ public class PublisherServiceImpl implements PublisherService {
                     i++;
                 }
                 if (i == BATCH_SIZE) {
-                    publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount + ""));
+                    Future<Integer> result = publisherThreadPool.submit(new PublisherCallableImpl(publisherList, threadCount));
+                    futureList.add(result);
                     threadCount++;
                     i = 0;
                     publisherList = new ArrayList<Publisher>(BATCH_SIZE);
-//                    try {
-//                        Thread.sleep(5000);
-//                    } catch(InterruptedException ie) {
-//                        ie.printStackTrace();
-//                    }
                 }
             }
             if (publisherList.size() > 0) {
-//                new PublisherThreadImpl(publisherList, threadCount + "");
-//                publisherDataService.bulkUpdatePublishers(publisherList);
-                publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount + ""));
+                Future<Integer> result = publisherThreadPool.submit(new PublisherCallableImpl(publisherList, threadCount));
+                futureList.add(result);
                 publisherList.clear();
             }
-        } catch (IOException io) {
+            for(Future<Integer> future : futureList)
+            {
+                try {
+                    System.out.println("Future result is - " + " - " + future.get() + "; And Task done is " + future.isDone());
+                }
+                catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception io) {
             io.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

@@ -2,6 +2,7 @@ package db;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
 public class MysqlClientManager {
@@ -14,26 +15,26 @@ public class MysqlClientManager {
     private static int MAX_IDLE_CONNECTIONS = 10;
     private static int MAX_PREPARED_STATEMENTS = 10000;
 
-//    private static String getConnectionUrl() {
-//        StringBuilder connectionStr = new StringBuilder();
-//        connectionStr.append(baseUrl);
-//        connectionStr.append(database).append("?");
-//        connectionStr.append("user=").append(userName).append("&");
-//        connectionStr.append("password=").append(password);
-//        return connectionStr.toString();
-//    }
-//
-//    public static Connection createConnection() {
-//        Connection connection = null;
-//
-//        System.out.println("The connection string is " + getConnectionUrl());
-//        try {
-//            connection = DriverManager.getConnection(getConnectionUrl());
-//        } catch (SQLException sqlException) {
-//            sqlException.printStackTrace();
-//        }
-//        return connection;
-//    }
+    private static String getConnectionUrl() {
+        StringBuilder connectionStr = new StringBuilder();
+        connectionStr.append(baseUrl);
+        connectionStr.append(database).append("?");
+        connectionStr.append("user=").append(userName).append("&");
+        connectionStr.append("password=").append(password);
+        return connectionStr.toString();
+    }
+
+    public static Connection createConnection() {
+        Connection connection = null;
+
+        System.out.println("The connection string is " + getConnectionUrl());
+        try {
+            connection = DriverManager.getConnection(getConnectionUrl());
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        return connection;
+    }
 
     private static BasicDataSource createConnectionPool() {
         if (ds == null) {
@@ -56,7 +57,7 @@ public class MysqlClientManager {
         return createConnectionPool().getConnection();
     }
 
-    public static void destroyQueryObjects(PreparedStatement ps, ResultSet rs) {
+    public static void destroyQueryObjects(Statement ps, ResultSet rs) {
         try {
             if (ps != null)
                 ps.close();

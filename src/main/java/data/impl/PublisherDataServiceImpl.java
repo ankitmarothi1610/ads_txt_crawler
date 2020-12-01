@@ -18,35 +18,35 @@ public class PublisherDataServiceImpl implements PublisherDataService {
     }
 
     public int bulkUpdatePublishers(List<Publisher> publishersList)  {
-        PreparedStatement ps = null;
+        Statement statement = null;
         try {
-            String sql = "INSERT INTO ads.publishers(name,url) VALUES (?,?) ON DUPLICATE KEY UPDATE url = ?";
-            ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            String sql = "INSERT INTO ads.publishers(name,url) VALUES ";
+
+            statement = connection.createStatement();
             int j = 0;
             for (int i = 0; i < publishersList.size(); i++) {
+                StringBuffer sb = new StringBuffer();
+                sb.append(sql);
                 Publisher publisher = publishersList.get(i);
-                ps.setString(1, publisher.name);
-                ps.setString(2, publisher.url);
-                ps.setString(3, publisher.url);
-                ps.addBatch();
+                sb.append("(\"" + publisher.name + "\",\"" + publisher.url+ "\")");
+                sb.append(" ON DUPLICATE KEY UPDATE name = \"" + publisher.name + "\";");
+                statement.addBatch(sb.toString());
+                if (i%10 == 0)
+                    statement.executeBatch();
             }
-            System.out.println("Batch for update " + ps);
-            int[] executeResult = ps.executeBatch();
-            ResultSet ids = ps.getGeneratedKeys();
-            for (int i = 0; i < executeResult.length; i++) {
-                ids.next();
-                if (executeResult[i] == 1) {
-                    System.out.println("Execute Result: " + i + ", Update Count: " + executeResult[i] + ", id: "
-                            + ids.getLong(1));
-                }
+            System.out.println("Batch for update " + statement.getUpdateCount());
+            statement.executeBatch();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
             }
-            ps.clearBatch();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
         } finally {
-            MysqlClientManager.destroyQueryObjects(ps, null);
+            MysqlClientManager.destroyQueryObjects(statement, null);
         }
         return publishersList.size();
     }

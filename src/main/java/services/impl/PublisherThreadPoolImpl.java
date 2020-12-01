@@ -10,11 +10,12 @@ public class PublisherThreadPoolImpl {
 //    }
 
     public PublisherThreadPoolImpl(int maximumPoolSize) {
-        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maximumPoolSize);
+        executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     }
 
-    public void submit(Runnable task) {
-        executor.submit(task);
+    public Future<Integer> submit(Callable<Integer> task) {
+        Future<Integer> result = executor.submit(task);
+        return result;
     }
 
     public void setRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
