@@ -43,7 +43,7 @@ public class PublisherServiceImpl implements PublisherService {
             public void rejectedExecution(Runnable r,
                                           ThreadPoolExecutor executor) {
                 System.out.println("PublisherThreadTask Rejected : "
-                        + ((PublisherCallableImpl) r).getName());
+                        + ((PublisherThreadImpl) r).getName());
                 System.out.println("Waiting for a second !!");
                 try {
                     Thread.sleep(1000);
@@ -51,7 +51,7 @@ public class PublisherServiceImpl implements PublisherService {
                     e.printStackTrace();
                 }
                 System.out.println("Thread added once again time : "
-                        + ((PublisherCallableImpl) r).getName());
+                        + ((PublisherThreadImpl) r).getName());
                 executor.execute(r);
             }
         });
@@ -100,7 +100,7 @@ public class PublisherServiceImpl implements PublisherService {
                     i++;
                 }
                 if (i == BATCH_SIZE) {
-                    Future<Integer> result = publisherThreadPool.submit(new PublisherCallableImpl(publisherList, threadCount));
+                    Future<Integer> result = publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount));
                     futureList.add(result);
                     threadCount++;
                     i = 0;
@@ -108,7 +108,7 @@ public class PublisherServiceImpl implements PublisherService {
                 }
             }
             if (publisherList.size() > 0) {
-                Future<Integer> result = publisherThreadPool.submit(new PublisherCallableImpl(publisherList, threadCount));
+                Future<Integer> result = publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount));
                 futureList.add(result);
                 publisherList.clear();
             }

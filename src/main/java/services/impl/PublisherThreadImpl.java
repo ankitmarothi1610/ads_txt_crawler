@@ -7,11 +7,11 @@ import models.Publisher;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class PublisherCallableImpl implements Callable<Integer> {
+public class PublisherThreadImpl implements Callable<Integer> {
     List<Publisher> publisherList;
     PublisherDataService publisherDataService;
     int threadid;
-    public PublisherCallableImpl(List<Publisher> publisherList, int id) {
+    public PublisherThreadImpl(List<Publisher> publisherList, int id) {
         this.publisherList = publisherList;
         this.publisherDataService = new PublisherDataServiceImpl();
         this.threadid = id;
