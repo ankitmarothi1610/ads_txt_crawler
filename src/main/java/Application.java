@@ -32,7 +32,9 @@ public class Application {
                     connection.close();
                 }
             } catch (Exception sqe) {
+                System.out.println("Failed connecting to db");
                 sqe.printStackTrace();
+                System.exit(0);
             }
         }
     }
