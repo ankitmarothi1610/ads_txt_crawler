@@ -3,14 +3,22 @@ package services.impl;
 import java.util.concurrent.*;
 
 public class PublisherThreadPoolImpl {
-    public static ThreadPoolExecutor executor;
-//    public PublisherThreadPoolImpl(int corePoolSize, int maximumPoolSize,
-//                                   long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
-//        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-//    }
+    private ThreadPoolExecutor executor;
+    private static int THREAD_POOL_SIZE = 100;
+    private static PublisherThreadPoolImpl instance;
+    private PublisherThreadPoolImpl() {
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+    }
 
-    public PublisherThreadPoolImpl(int maximumPoolSize) {
-        executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+    public static synchronized PublisherThreadPoolImpl getThreadPool() {
+        if (instance == null) {
+            synchronized (PublisherThreadPoolImpl.class) {
+                if (instance == null) {
+                    instance = new PublisherThreadPoolImpl();
+                }
+            }
+        }
+        return instance;
     }
 
     public Future<Integer> submit(Callable<Integer> task) {

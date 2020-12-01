@@ -1,8 +1,6 @@
 package services.impl;
 
 import com.google.common.base.Strings;
-import data.PublisherDataService;
-import data.impl.PublisherDataServiceImpl;
 import helpers.PublisherHelper;
 import models.Publisher;
 import services.PublisherService;
@@ -36,7 +34,7 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     private PublisherThreadPoolImpl createThreadPool() {
-        return new PublisherThreadPoolImpl(THREAD_POOL_SIZE);
+        return PublisherThreadPoolImpl.getThreadPool();
     }
 
     private void setThreadPoolRejectionHandler() {
