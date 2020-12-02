@@ -43,7 +43,6 @@ public class AdvertiserDataServiceImpl implements AdvertiserDataService {
                     statement.executeBatch();
                 }
             }
-            System.out.println("Batch for update " + statement.getUpdateCount());
             statement.executeBatch();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();

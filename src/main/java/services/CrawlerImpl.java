@@ -85,12 +85,14 @@ public class CrawlerImpl {
                     i++;
                     if (i % AdvertiserHelper.FETCH_SIZE == 0) {
                         advertiserDataService.addAdvertiserBatch(advertiserList);
+                        System.out.println("Added a batch of " + advertiserList.size() + " records");
                         advertiserList.clear();
                     }
                 }
             }
             if (advertiserList.size() > 0) {
                 advertiserDataService.addAdvertiserBatch(advertiserList);
+                System.out.println("Added a batch of " + advertiserList.size() + " records");
                 advertiserList.clear();
             }
         } catch(IOException ie) {

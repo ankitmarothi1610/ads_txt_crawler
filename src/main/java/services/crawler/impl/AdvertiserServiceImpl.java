@@ -82,7 +82,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
         List<Future<String>> futureList = new ArrayList<>();
         int threadCount = 1;
         for (String url: urls) {
-            crawlerImpl.downloadFile(url);
+            System.out.println("Submitting processing for url " + url);
             Future<String> result = CrawlerThreadPoolImpl
                     .getInstance()
                     .submit(new CrawlerThreadImpl(url, threadCount));
