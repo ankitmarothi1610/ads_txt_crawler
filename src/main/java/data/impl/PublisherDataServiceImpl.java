@@ -2,6 +2,7 @@ package data.impl;
 
 import data.PublisherDataService;
 import db.MysqlClientManager;
+import helpers.PublisherHelper;
 import models.Publisher;
 
 import java.sql.*;
@@ -23,7 +24,6 @@ public class PublisherDataServiceImpl implements PublisherDataService {
             String sql = "INSERT INTO ads.publishers(name,url) VALUES ";
 
             statement = connection.createStatement();
-            int j = 0;
             for (int i = 0; i < publishersList.size(); i++) {
                 StringBuffer sb = new StringBuffer();
                 sb.append(sql);
@@ -41,13 +41,44 @@ public class PublisherDataServiceImpl implements PublisherDataService {
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
-        } catch (SQLException sqlException) {
+        } catch (Exception sqlException) {
             sqlException.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
         } finally {
             MysqlClientManager.destroyQueryObjects(statement, null);
         }
         return publishersList.size();
+    }
+
+    public ResultSet getIterablePublisherCrawlUrls() {
+        String sql = "SELECT url FROM ads.publishers WHERE processed = false ORDER BY id ASC";
+        ResultSet rs = null;
+        PreparedStatement stmt;
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setFetchSize(PublisherHelper.FETCH_SIZE);
+            rs = stmt.executeQuery();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        return rs;
+    }
+
+    public void markProcessed(List<String> urls) {
+        String sql = "UPDATE ads.publishers set processed = true WHERE url = ?";
+        PreparedStatement preparedStatement;
+        try {
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(sql);
+            for (String url: urls) {
+                preparedStatement.setString(1, url);
+                preparedStatement.addBatch();
+            }
+            System.out.println("Query to mark urls as processed: " + preparedStatement);
+            preparedStatement.executeBatch();
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
     }
 }

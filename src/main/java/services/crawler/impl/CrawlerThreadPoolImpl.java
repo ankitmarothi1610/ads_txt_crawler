@@ -1,28 +1,28 @@
-package services.publisher.impl;
+package services.crawler.impl;
 
 import java.util.concurrent.*;
 
-public class PublisherThreadPoolImpl {
+public class CrawlerThreadPoolImpl {
     private ThreadPoolExecutor executor;
     private static int THREAD_POOL_SIZE = 100;
-    private static PublisherThreadPoolImpl instance;
-    private PublisherThreadPoolImpl() {
+    private static CrawlerThreadPoolImpl instance;
+    private CrawlerThreadPoolImpl() {
         executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     }
 
-    public static synchronized PublisherThreadPoolImpl getInstance() {
+    public static synchronized CrawlerThreadPoolImpl getInstance() {
         if (instance == null) {
-            synchronized (PublisherThreadPoolImpl.class) {
+            synchronized (CrawlerThreadPoolImpl.class) {
                 if (instance == null) {
-                    instance = new PublisherThreadPoolImpl();
+                    instance = new CrawlerThreadPoolImpl();
                 }
             }
         }
         return instance;
     }
 
-    public Future<Integer> submit(PublisherThreadImpl task) {
-        Future<Integer> result = executor.submit(task);
+    public Future<String> submit(Callable<String> task) {
+        Future<String> result = executor.submit(task);
         return result;
     }
 

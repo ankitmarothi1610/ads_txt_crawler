@@ -17,13 +17,11 @@ public class PublisherServiceImpl implements PublisherService {
     private static final int BATCH_SIZE = 1000;
     private static final int THREAD_POOL_SIZE = 100;
     private static final int QUEUE_SIZE = 1000;
-    BlockingQueue<Runnable> blockingQueue;
     PublisherThreadPoolImpl publisherThreadPool;
 
     public PublisherServiceImpl() {
-        blockingQueue =  new ArrayBlockingQueue<Runnable>(QUEUE_SIZE);
         printWarmUpDetails();
-        publisherThreadPool = createThreadPool();
+        publisherThreadPool = PublisherThreadPoolImpl.getInstance();
         setThreadPoolRejectionHandler();
     }
 
@@ -31,11 +29,6 @@ public class PublisherServiceImpl implements PublisherService {
         System.out.println("Intializing the publisher thread pool with size " + THREAD_POOL_SIZE);
         System.out.println("MAX size of the thread pool is " + THREAD_POOL_SIZE);
         System.out.println("Blocking Queue size is " + QUEUE_SIZE);
-    }
-
-    private PublisherThreadPoolImpl createThreadPool() {
-        // Even though the PublisherThreadPoolImpl is singleton, initialize before hand
-        return PublisherThreadPoolImpl.getInstance();
     }
 
     private void setThreadPoolRejectionHandler() {
