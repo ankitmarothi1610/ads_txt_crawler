@@ -1,4 +1,4 @@
-package services.impl;
+package services.publisher.impl;
 
 import data.PublisherDataService;
 import data.impl.PublisherDataServiceImpl;

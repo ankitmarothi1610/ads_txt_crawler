@@ -1,6 +1,6 @@
 import db.MysqlClientManager;
-import services.PublisherService;
-import services.impl.PublisherServiceImpl;
+import services.publisher.PublisherService;
+import services.publisher.impl.PublisherServiceImpl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

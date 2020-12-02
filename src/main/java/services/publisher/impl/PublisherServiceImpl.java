@@ -1,9 +1,9 @@
-package services.impl;
+package services.publisher.impl;
 
 import com.google.common.base.Strings;
 import helpers.PublisherHelper;
 import models.Publisher;
-import services.PublisherService;
+import services.publisher.PublisherService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,7 +34,8 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     private PublisherThreadPoolImpl createThreadPool() {
-        return PublisherThreadPoolImpl.getThreadPool();
+        // Even though the PublisherThreadPoolImpl is singleton, initialize before hand
+        return PublisherThreadPoolImpl.getInstance();
     }
 
     private void setThreadPoolRejectionHandler() {
@@ -100,7 +101,9 @@ public class PublisherServiceImpl implements PublisherService {
                     i++;
                 }
                 if (i == BATCH_SIZE) {
-                    Future<Integer> result = publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount));
+                    Future<Integer> result = PublisherThreadPoolImpl
+                            .getInstance()
+                            .submit(new PublisherThreadImpl(publisherList, threadCount));
                     futureList.add(result);
                     threadCount++;
                     i = 0;
@@ -108,12 +111,13 @@ public class PublisherServiceImpl implements PublisherService {
                 }
             }
             if (publisherList.size() > 0) {
-                Future<Integer> result = publisherThreadPool.submit(new PublisherThreadImpl(publisherList, threadCount));
+                Future<Integer> result = PublisherThreadPoolImpl
+                        .getInstance()
+                        .submit(new PublisherThreadImpl(publisherList, threadCount));
                 futureList.add(result);
                 publisherList.clear();
             }
-            for(Future<Integer> future : futureList)
-            {
+            for(Future<Integer> future : futureList) {
                 try {
                     System.out.println("Future result is - " + " - " + future.get() + "; And Task done is " + future.isDone());
                 }

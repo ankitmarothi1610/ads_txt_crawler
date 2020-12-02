@@ -1,4 +1,4 @@
-package services.impl;
+package services.publisher.impl;
 
 import java.util.concurrent.*;
 
@@ -10,7 +10,7 @@ public class PublisherThreadPoolImpl {
         executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     }
 
-    public static synchronized PublisherThreadPoolImpl getThreadPool() {
+    public static synchronized PublisherThreadPoolImpl getInstance() {
         if (instance == null) {
             synchronized (PublisherThreadPoolImpl.class) {
                 if (instance == null) {
