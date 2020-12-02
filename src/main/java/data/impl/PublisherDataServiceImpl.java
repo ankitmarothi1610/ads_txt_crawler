@@ -63,20 +63,14 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         return rs;
     }
 
-    public void markProcessed(List<String> urls) {
+    public void markProcessed(String url) {
         String sql = "UPDATE ads.publishers set processed = true WHERE url = ?";
         PreparedStatement preparedStatement;
         try {
-            connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement(sql);
-            for (String url: urls) {
-                preparedStatement.setString(1, url);
-                preparedStatement.addBatch();
-            }
+            preparedStatement.setString(1, url);
             System.out.println("Query to mark urls as processed: " + preparedStatement);
-            preparedStatement.executeBatch();
-            connection.commit();
-            connection.setAutoCommit(true);
+            preparedStatement.executeUpdate();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }

@@ -62,13 +62,11 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 i++;
                 if (i == AdvertiserHelper.FETCH_SIZE) {
                     crawlPublisherUrls(urls);
-                    publisherDataService.markProcessed(urls);
                     i = 1;
                 }
             }
             if (i > 0) {
                 crawlPublisherUrls(urls);
-                publisherDataService.markProcessed(urls);
             }
         } catch(SQLException sqlException) {
             sqlException.printStackTrace();
@@ -78,7 +76,6 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     }
 
     public void crawlPublisherUrls(List<String> urls) {
-        CrawlerImpl crawlerImpl = new CrawlerImpl();
         List<Future<String>> futureList = new ArrayList<>();
         int threadCount = 1;
         for (String url: urls) {
