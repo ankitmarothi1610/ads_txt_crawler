@@ -1,6 +1,8 @@
 import db.MysqlClientManager;
 import services.crawler.AdvertiserService;
 import services.crawler.impl.AdvertiserServiceImpl;
+import services.publisher.PublisherService;
+import services.publisher.impl.PublisherServiceImpl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -42,8 +44,8 @@ public class Application {
     public static void main(String args[]) {
         Application app = new Application();
         app.tesDBConnection();
-//        PublisherService publisherService = new PublisherServiceImpl();
-//        publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
+        PublisherService publisherService = new PublisherServiceImpl();
+        publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
         AdvertiserService advertiserService = new AdvertiserServiceImpl();
         advertiserService.sourceAdsTxtForPublisherUrls();
         System.exit(0);
