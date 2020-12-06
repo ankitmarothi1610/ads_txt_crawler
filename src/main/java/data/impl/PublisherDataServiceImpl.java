@@ -11,11 +11,6 @@ import java.util.List;
 public class PublisherDataServiceImpl implements PublisherDataService {
     Connection connection;
     public PublisherDataServiceImpl()  {
-//        try {
-//            connection = MysqlClientManager.getConnection();
-//        } catch (SQLException se) {
-//            se.printStackTrace();
-//        }
     }
 
     public int bulkUpdatePublishers(List<Publisher> publishersList)  {

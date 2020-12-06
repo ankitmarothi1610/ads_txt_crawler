@@ -70,7 +70,6 @@ public class AdvertiserServiceImpl implements AdvertiserService {
             sqlException.printStackTrace();
         } finally {
             MysqlClientManager.destroyQueryObjects(null, rs);
-//            crawlerThreadPool.
         }
     }
 
@@ -85,16 +84,5 @@ public class AdvertiserServiceImpl implements AdvertiserService {
             futureList.add(result);
             threadCount++;
         }
-//        for(Future<String> future : futureList) {
-//            try {
-//                if (future.isDone()) {
-//                    System.out.println("Future result is - " +  future.get());
-//                } else {
-//                    System.out.println("Waiting on future - " +  future.get());
-//                }
-//            } catch (InterruptedException | ExecutionException ie) {
-//                ie.printStackTrace();
-//            }
-//        }
     }
 }
