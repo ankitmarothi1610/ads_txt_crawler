@@ -11,14 +11,17 @@ import java.util.List;
 public class PublisherDataServiceImpl implements PublisherDataService {
     Connection connection;
     public PublisherDataServiceImpl()  {
+        try {
+            connection = MysqlClientManager.getConnection();
+        } catch(SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
     }
 
     public int bulkUpdatePublishers(List<Publisher> publishersList)  {
         Statement statement = null;
-        connection = MysqlClientManager.createConnection();
         try {
             String sql = "INSERT INTO ads.publishers(name,url) VALUES ";
-
             statement = connection.createStatement();
             for (int i = 0; i < publishersList.size(); i++) {
                 StringBuffer sb = new StringBuffer();
@@ -39,10 +42,13 @@ public class PublisherDataServiceImpl implements PublisherDataService {
             }
         } catch (Exception sqlException) {
             sqlException.printStackTrace();
-        } try {
-            connection.close();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+        } finally {
+            try {
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
         }
         return publishersList.size();
     }
@@ -50,7 +56,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
     public ResultSet getIterablePublisherCrawlUrls() {
         String sql = "SELECT id, name, url FROM ads.publishers WHERE processed = false ORDER BY id ASC";
         ResultSet rs = null;
-        PreparedStatement stmt;
+        PreparedStatement stmt = null;
         System.out.println("Query to get Publisher records " + sql);
         connection = MysqlClientManager.createConnection();
         try {
@@ -77,11 +83,6 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         } finally {
             if (preparedStatement != null)
                 MysqlClientManager.destroyQueryObjects(preparedStatement, null);
-            try {
-                connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
         }
     }
 }
