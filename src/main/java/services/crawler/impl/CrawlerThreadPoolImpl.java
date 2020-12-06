@@ -33,4 +33,12 @@ public class CrawlerThreadPoolImpl {
     public void prestartAllCoreThreads() {
         executor.prestartAllCoreThreads();
     }
+    public void awaitShutDown() {
+        try {
+            executor.awaitTermination(15, TimeUnit.MINUTES);
+        } catch(InterruptedException ie) {
+            ie.printStackTrace();
+        }
+    }
+
 }

@@ -2,7 +2,6 @@ package services.crawler.impl;
 
 import data.PublisherDataService;
 import data.impl.PublisherDataServiceImpl;
-import services.CrawlerImpl;
 
 import java.util.concurrent.Callable;
 

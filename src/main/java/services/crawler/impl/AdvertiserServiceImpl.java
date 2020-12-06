@@ -70,6 +70,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
             sqlException.printStackTrace();
         } finally {
             MysqlClientManager.destroyQueryObjects(null, rs);
+            crawlerThreadPool.awaitShutDown();
         }
     }
 
