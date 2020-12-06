@@ -86,7 +86,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         }
     }
     public void setFlagsToFalse() {
-        String sql = "UPDATE ads.publishers set processed = false and notFound = false";
+        String sql = "UPDATE ads.publishers set processed = false, notFound = false";
         PreparedStatement ps = null;
         Connection con = null;
         try {
