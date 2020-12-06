@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Application {
     public void tesDBConnection() {
@@ -42,12 +44,34 @@ public class Application {
     }
 
     public static void main(String args[]) {
+        System.out.println("Please select from one of the actions");
+        System.out.println("1. Test Connection");
+        System.out.println("2. Source publishers");
+        System.out.println("3. Source Ads.Txt from publishers");
+        System.out.println("Please enter 1 / 2 / 3 for the inputs");
+        Scanner scanner = new Scanner(System.in);
+        int input = 0;
+        try {
+            input = scanner.nextInt();
+        } catch (InputMismatchException inputMismatchException) {
+            System.out.println("Input has to be a number");
+        }
         Application app = new Application();
-        app.tesDBConnection();
-//        PublisherService publisherService = new PublisherServiceImpl();
-//        publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
-        AdvertiserService advertiserService = new AdvertiserServiceImpl();
-        advertiserService.sourceAdsTxtForPublisherUrls();
+        switch(input) {
+            case 1:
+                app.tesDBConnection();
+                break;
+            case 2:
+                PublisherService publisherService = new PublisherServiceImpl();
+                publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
+                break;
+            case 3:
+                AdvertiserService advertiserService = new AdvertiserServiceImpl();
+                advertiserService.sourceAdsTxtForPublisherUrls();
+                break;
+            default:
+                System.out.println("Invalid Input");
+        }
         System.exit(0);
     }
 }

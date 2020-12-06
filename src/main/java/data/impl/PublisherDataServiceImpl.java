@@ -50,13 +50,9 @@ public class PublisherDataServiceImpl implements PublisherDataService {
     public ResultSet getIterablePublisherCrawlUrls() {
         String sql = "SELECT url FROM ads.publishers WHERE processed = false ORDER BY id ASC";
         ResultSet rs = null;
-        try {
-            connection = MysqlClientManager.getConnection();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        }
-
         PreparedStatement stmt;
+        System.out.println("Query to get Publisher records " + sql);
+        connection = MysqlClientManager.createConnection();
         try {
             stmt = connection.prepareStatement(sql);
             stmt.setFetchSize(PublisherHelper.FETCH_SIZE);
