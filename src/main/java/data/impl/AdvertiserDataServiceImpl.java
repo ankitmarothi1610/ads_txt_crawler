@@ -52,7 +52,7 @@ public class AdvertiserDataServiceImpl implements AdvertiserDataService {
             } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
             }
-            MysqlClientManager.destroyQueryObjects(statement, null);
+            MysqlClientManager.destroyQueryObjects(con, statement, null);
         }
     }
 
@@ -68,13 +68,7 @@ public class AdvertiserDataServiceImpl implements AdvertiserDataService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
-            try {
-                if (con != null)
-                    con.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
-            MysqlClientManager.destroyQueryObjects(ps, null);
+            MysqlClientManager.destroyQueryObjects(con, ps, null);
         }
     }
 }

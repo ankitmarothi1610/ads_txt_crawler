@@ -4,15 +4,14 @@ import data.AdvertiserDataService;
 import data.PublisherDataService;
 import data.impl.AdvertiserDataServiceImpl;
 import data.impl.PublisherDataServiceImpl;
-import db.MysqlClientManager;
 import models.Publisher;
 import services.crawler.AdvertiserService;
 import services.publisher.impl.PublisherThreadImpl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -52,30 +51,37 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     @Override
     public void sourceAdsTxtForPublisherUrls() {
         publisherDataService.setFlagsToFalse();
-        ResultSet rs = publisherDataService.getIterablePublisherCrawlUrls();
-        try {
-            while (rs.next()) {
-                Publisher publisher = new Publisher();
-                publisher.id = rs.getInt(1);
-                publisher.name = rs.getString(2);
-                publisher.url = rs.getString(3);
-                crawlPublisherUrls(publisher);
-            }
-        } catch(SQLException sqlException) {
-            sqlException.printStackTrace();
-        } finally {
-            MysqlClientManager.destroyQueryObjects(null, rs);
-            crawlerThreadPool.awaitShutDown();
-            MysqlClientManager.shutDown();
+//        ResultSet rs = publisherDataService.getIterablePublisherCrawlUrls();
+        Map<String, Integer> ids = publisherDataService.getMaxAndMinIds();
+        int max = ids.get("max");
+        int min = ids.get("min");
+        int minId = min;
+        int maxId = min;
+        while (minId < max) {
+            maxId += minId + 100;
+            if (maxId > max)
+                maxId = max;
+            sourceBatch(minId, maxId);
+            minId = maxId;
+        }
+    }
+
+    public void sourceBatch(int max, int min) {
+        List<Publisher> publisherList = publisherDataService.getRecordsBetweenIds(max, min);
+        for(Publisher publisher: publisherList) {
+            crawlPublisherUrls(publisher);
         }
     }
 
     public void crawlPublisherUrls(Publisher publisher) {
-        List<Future<String>> futureList = new ArrayList<>();
         System.out.println("Submitting processing for url " + publisher.url);
         Future<String> result = CrawlerThreadPoolImpl
                 .getInstance()
                 .submit(new CrawlerThreadImpl(publisher));
-        futureList.add(result);
+        try {
+            System.out.println("Future is " + result.isDone() + " and result is " + result.get());
+        } catch (InterruptedException | ExecutionException ie) {
+            ie.printStackTrace();
+        }
     }
 }

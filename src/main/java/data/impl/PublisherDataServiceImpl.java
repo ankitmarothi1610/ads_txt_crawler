@@ -6,7 +6,10 @@ import helpers.PublisherHelper;
 import models.Publisher;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PublisherDataServiceImpl implements PublisherDataService {
     public PublisherDataServiceImpl()  {}
@@ -16,6 +19,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         Connection con = null;
         try {
             String sql = "INSERT INTO ads.publishers(name,url) VALUES ";
+            con = MysqlClientManager.createConnection();
             statement = con.createStatement();
             for (int i = 0; i < publishersList.size(); i++) {
                 StringBuffer sb = new StringBuffer();
@@ -37,6 +41,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         } catch (Exception sqlException) {
             sqlException.printStackTrace();
         } finally {
+            MysqlClientManager.destroyQueryObjects(con, null, null);
             try {
                 if (statement != null)
                     statement.close();
@@ -77,14 +82,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
-            if (preparedStatement != null)
-                MysqlClientManager.destroyQueryObjects(preparedStatement, null);
-            try {
-                if (con != null)
-                    con.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
+            MysqlClientManager.destroyQueryObjects(con, preparedStatement, null);
         }
     }
     public void setFlagsToFalse() {
@@ -98,7 +96,57 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
-            MysqlClientManager.destroyQueryObjects(ps, null);
+            MysqlClientManager.destroyQueryObjects(con, ps, null);
         }
+    }
+
+    public Map<String, Integer> getMaxAndMinIds() {
+        String sql = "select max(id) as max, min(id) as min from ads.publishers";
+        PreparedStatement ps = null;
+        Connection con = null;
+        ResultSet rs = null;
+        Map<String, Integer> result = null;
+        try {
+            con = MysqlClientManager.createConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                result = new HashMap<>(2);
+                result.put("max", rs.getInt(1));
+                result.put("min", rs.getInt(2));
+            }
+        } catch(SQLException sqlException) {
+            sqlException.printStackTrace();
+        } finally {
+            MysqlClientManager.destroyQueryObjects(con, ps, rs);
+        }
+        return result;
+    }
+
+    public List<Publisher> getRecordsBetweenIds(int min, int max) {
+        String sql = "select id, name, url from ads.publishers where id between " + min + " and " + max;
+        System.out.println("Query to get records: " + sql);
+        PreparedStatement ps = null;
+        Connection con = null;
+        ResultSet rs = null;
+        List<Publisher> publisherList = null;
+        try {
+            publisherList = new ArrayList<>();
+            con = MysqlClientManager.createConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Publisher publisher = new Publisher();
+                publisher.id = rs.getInt(1);
+                publisher.name = rs.getString(2);
+                publisher.url = rs.getString(3);
+                publisherList.add(publisher);
+            }
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        } finally {
+            MysqlClientManager.destroyQueryObjects(con, ps, rs);
+        }
+        return publisherList;
     }
 }

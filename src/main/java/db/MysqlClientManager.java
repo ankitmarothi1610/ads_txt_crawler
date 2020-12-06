@@ -56,8 +56,10 @@ public class MysqlClientManager {
         return createConnectionPool().getConnection();
     }
 
-    public static void destroyQueryObjects(Statement ps, ResultSet rs) {
+    public static void destroyQueryObjects(Connection con, Statement ps, ResultSet rs) {
         try {
+            if (con != null)
+                con.close();
             if (ps != null)
                 ps.close();
             if (rs != null)
