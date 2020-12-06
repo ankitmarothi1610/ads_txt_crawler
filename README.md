@@ -51,23 +51,28 @@
 
 ##Due to lack of time this has been restricted to, 
 
->CREATE TABLE `publishers` (
-  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `url` varchar(100) NOT NULL,
-  `processed` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniqueUrl` (`url`)
-)
+>Create Table: CREATE TABLE `publishers` (
+`id` mediumint(9) NOT NULL AUTO_INCREMENT,
+`name` varchar(100) NOT NULL,
+`url` varchar(100) NOT NULL,
+`processed` tinyint(1) DEFAULT '0',
+`notFound` tinyint(1) DEFAULT '0',
+PRIMARY KEY (`id`),
+UNIQUE KEY `uniqueUrl` (`url`)
+) ENGINE=InnoDB AUTO_INCREMENT=2817784 DEFAULT CHARSET=latin1
 
->CREATE TABLE `advertisers` (
-  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL,
-  `advertiserId` varchar(30) NOT NULL,
-  `accountType` varchar(30) NOT NULL,
-  `tagId` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-)
+>Create Table: CREATE TABLE `advertisers` (
+`id` mediumint(9) NOT NULL AUTO_INCREMENT,
+`publisherId` mediumint(9) NOT NULL,
+`name` varchar(30) NOT NULL,
+`advertiserId` varchar(30) NOT NULL,
+`accountType` varchar(30) NOT NULL,
+`tagId` varchar(30) DEFAULT NULL,
+PRIMARY KEY (`id`),
+KEY `publisherId` (`publisherId`),
+CONSTRAINT `advertisers_ibfk_1` FOREIGN KEY (`publisherId`) REFERENCES `publishers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=36575 DEFAULT CHARSET=latin1
+
 
 ##Queries 
 1. List of unique advertisers on a website
