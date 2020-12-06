@@ -1,6 +1,7 @@
 package services.publisher.impl;
 
 import com.google.common.base.Strings;
+import db.MysqlClientManager;
 import helpers.PublisherHelper;
 import models.Publisher;
 import services.publisher.PublisherService;
@@ -120,6 +121,8 @@ public class PublisherServiceImpl implements PublisherService {
             }
         } catch (Exception io) {
             io.printStackTrace();
+        } finally {
+            MysqlClientManager.shutDown();
         }
     }
 

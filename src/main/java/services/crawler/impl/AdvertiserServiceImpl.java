@@ -76,6 +76,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
         } finally {
             MysqlClientManager.destroyQueryObjects(null, rs);
             crawlerThreadPool.awaitShutDown();
+            MysqlClientManager.shutDown();
         }
     }
 

@@ -66,4 +66,13 @@ public class MysqlClientManager {
             e.printStackTrace();
         }
     }
+
+    public static void shutDown() {
+        try {
+            if (ds != null)
+                ds.close();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+    }
 }
