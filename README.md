@@ -1,4 +1,8 @@
 # ads_txt_crawler
+
+The main code starts at Application.java and it can be tweaked to run either publisher sourcing or ads.txt sourcing
+
+
 Sourcing publisher data
   The ads.txt crawler is a utility to taken in a list of publishers from a file domains_list.txt
   This data is sourced into mysql using a FixedThreadPool and uses DBCP2 for mysql thread pool to source the data
