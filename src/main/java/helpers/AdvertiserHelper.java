@@ -6,7 +6,7 @@ import models.Advertiser;
 public class AdvertiserHelper {
     public static int FETCH_SIZE = 200;
 
-    public static Advertiser createAdvertiserObject(String line) {
+    public static Advertiser createAdvertiserObject(int publisherId, String line) {
         String tokens[] = line.split(",");
         Advertiser advertiser = new Advertiser();
         if (tokens.length < 3) {
@@ -21,6 +21,7 @@ public class AdvertiserHelper {
                 advertiser.accountType = tokens[2].strip();
             if (tokens.length >= 4 && !Strings.isNullOrEmpty(tokens[3].strip()))
                 advertiser.tag = tokens[3].strip();
+            advertiser.publisherId = publisherId;
         }
         return advertiser;
     }

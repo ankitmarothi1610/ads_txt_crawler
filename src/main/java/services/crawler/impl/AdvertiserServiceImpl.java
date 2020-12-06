@@ -6,6 +6,7 @@ import data.impl.AdvertiserDataServiceImpl;
 import data.impl.PublisherDataServiceImpl;
 import db.MysqlClientManager;
 import helpers.AdvertiserHelper;
+import models.Publisher;
 import services.crawler.AdvertiserService;
 import services.publisher.impl.PublisherThreadImpl;
 
@@ -51,20 +52,24 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     public void sourceAdsTxtForPublisherUrls() {
         ResultSet rs = publisherDataService.getIterablePublisherCrawlUrls();
         int i = 0;
-        List<String> urls = new ArrayList<>(0);
+        List<Publisher> publishersList = new ArrayList<>(0);
         try {
             while (rs.next()) {
-                urls.add(rs.getString(1));
+                Publisher publisher = new Publisher();
+                publisher.id = rs.getInt(1);
+                publisher.name = rs.getString(2);
+                publisher.url = rs.getString(3);
+                publishersList.add(publisher);
                 i++;
                 if (i == AdvertiserHelper.FETCH_SIZE) {
-                    crawlPublisherUrls(urls);
+                    crawlPublisherUrls(publishersList);
                     i = 0;
-                    urls.clear();
+                    publishersList.clear();
                 }
             }
             if (i > 0) {
-                crawlPublisherUrls(urls);
-                urls.clear();
+                crawlPublisherUrls(publishersList);
+                publishersList.clear();
             }
         } catch(SQLException sqlException) {
             sqlException.printStackTrace();
@@ -74,14 +79,14 @@ public class AdvertiserServiceImpl implements AdvertiserService {
         }
     }
 
-    public void crawlPublisherUrls(List<String> urls) {
+    public void crawlPublisherUrls(List<Publisher> publisherList) {
         List<Future<String>> futureList = new ArrayList<>();
         int threadCount = 1;
-        for (String url: urls) {
-            System.out.println("Submitting processing for url " + url);
+        for (Publisher publisher: publisherList) {
+            System.out.println("Submitting processing for url " + publisher.url);
             Future<String> result = CrawlerThreadPoolImpl
                     .getInstance()
-                    .submit(new CrawlerThreadImpl(url, threadCount));
+                    .submit(new CrawlerThreadImpl(publisher, threadCount));
             futureList.add(result);
             threadCount++;
         }

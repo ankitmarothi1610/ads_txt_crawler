@@ -48,7 +48,7 @@ public class PublisherDataServiceImpl implements PublisherDataService {
     }
 
     public ResultSet getIterablePublisherCrawlUrls() {
-        String sql = "SELECT url FROM ads.publishers WHERE processed = false ORDER BY id ASC";
+        String sql = "SELECT id, name, url FROM ads.publishers WHERE processed = false ORDER BY id ASC";
         ResultSet rs = null;
         PreparedStatement stmt;
         System.out.println("Query to get Publisher records " + sql);

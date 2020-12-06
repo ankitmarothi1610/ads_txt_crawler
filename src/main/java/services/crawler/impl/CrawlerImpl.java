@@ -5,6 +5,7 @@ import data.AdvertiserDataService;
 import data.impl.AdvertiserDataServiceImpl;
 import helpers.AdvertiserHelper;
 import models.Advertiser;
+import models.Publisher;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
@@ -63,7 +64,7 @@ public class CrawlerImpl {
         return filePath;
     }
 
-    public void sourceFile(String filePath) {
+    public void sourceFile(Publisher publisher, String filePath) {
         File file = new File(filePath);
         FileReader fr;
         BufferedReader br;
@@ -82,7 +83,7 @@ public class CrawlerImpl {
                 if (line.startsWith("#")) {
                     continue;
                 }
-                Advertiser advertiser = AdvertiserHelper.createAdvertiserObject(line);
+                Advertiser advertiser = AdvertiserHelper.createAdvertiserObject(publisher.id, line);
                 int i = 1;
                 if (advertiser != null) {
                     advertiserList.add(advertiser);
