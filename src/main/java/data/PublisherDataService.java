@@ -9,4 +9,5 @@ public interface PublisherDataService {
     int bulkUpdatePublishers(List<Publisher> publisherList);
     ResultSet getIterablePublisherCrawlUrls();
     void markTrue(String url, String field);
+    void setFlagsToFalse();
 }

@@ -9,20 +9,14 @@ import java.sql.*;
 import java.util.List;
 
 public class PublisherDataServiceImpl implements PublisherDataService {
-    Connection connection;
-    public PublisherDataServiceImpl()  {
-        try {
-            connection = MysqlClientManager.getConnection();
-        } catch(SQLException sqlException) {
-            sqlException.printStackTrace();
-        }
-    }
+    public PublisherDataServiceImpl()  {}
 
     public int bulkUpdatePublishers(List<Publisher> publishersList)  {
         Statement statement = null;
+        Connection con = null;
         try {
             String sql = "INSERT INTO ads.publishers(name,url) VALUES ";
-            statement = connection.createStatement();
+            statement = con.createStatement();
             for (int i = 0; i < publishersList.size(); i++) {
                 StringBuffer sb = new StringBuffer();
                 sb.append(sql);
@@ -57,9 +51,11 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         String sql = "SELECT id, name, url FROM ads.publishers WHERE processed = false ORDER BY id ASC";
         ResultSet rs = null;
         PreparedStatement stmt = null;
+        Connection con = null;
         System.out.println("Query to get Publisher records " + sql);
         try {
-            stmt = connection.prepareStatement(sql);
+            con = MysqlClientManager.createConnection();
+            stmt = con.prepareStatement(sql);
             stmt.setFetchSize(PublisherHelper.FETCH_SIZE);
             rs = stmt.executeQuery();
         } catch (SQLException sqlException) {
@@ -71,8 +67,10 @@ public class PublisherDataServiceImpl implements PublisherDataService {
     public void markTrue(String url, String field) {
         String sql = "UPDATE ads.publishers set " + field + " = true WHERE url = ?";
         PreparedStatement preparedStatement = null;
+        Connection con = null;
         try {
-            preparedStatement = connection.prepareStatement(sql);
+            con = MysqlClientManager.createConnection();
+            preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, url);
             System.out.println("Query to mark urls as processed: " + preparedStatement);
             preparedStatement.executeUpdate();
@@ -81,6 +79,26 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         } finally {
             if (preparedStatement != null)
                 MysqlClientManager.destroyQueryObjects(preparedStatement, null);
+            try {
+                if (con != null)
+                    con.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        }
+    }
+    public void setFlagsToFalse() {
+        String sql = "UPDATE ads.publishers set processed = false and notFound = false";
+        PreparedStatement ps = null;
+        Connection con = null;
+        try {
+            con = MysqlClientManager.createConnection();
+            ps = con.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        } finally {
+            MysqlClientManager.destroyQueryObjects(ps, null);
         }
     }
 }

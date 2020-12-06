@@ -4,7 +4,7 @@ import java.util.concurrent.*;
 
 public class CrawlerThreadPoolImpl {
     private ThreadPoolExecutor executor;
-    private static int THREAD_POOL_SIZE = 200;
+    private static int THREAD_POOL_SIZE = 50;
     private static CrawlerThreadPoolImpl instance;
     private CrawlerThreadPoolImpl() {
         executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREAD_POOL_SIZE);

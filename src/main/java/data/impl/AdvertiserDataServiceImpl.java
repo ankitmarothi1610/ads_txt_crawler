@@ -12,21 +12,16 @@ import java.sql.Statement;
 import java.util.List;
 
 public class AdvertiserDataServiceImpl implements AdvertiserDataService {
-    Connection connection;
-    public AdvertiserDataServiceImpl() {
-        try {
-            connection = MysqlClientManager.getConnection();
-        } catch(SQLException sqlException) {
-            sqlException.printStackTrace();
-        }
-    }
+    public AdvertiserDataServiceImpl() {}
 
     @Override
     public void addAdvertiserBatch(List<Advertiser> advertiserList) {
         Statement statement = null;
         String sql = "INSERT INTO ads.advertisers (name, publisherId, accountType, advertiserId, tagId) VALUES";
+        Connection con = null;
         try {
-            statement = connection.createStatement();
+            con = MysqlClientManager.createConnection();
+            statement = con.createStatement();
             for (int i = 0; i < advertiserList.size(); i++) {
                 StringBuffer sb = new StringBuffer();
                 sb.append(sql);
@@ -51,6 +46,12 @@ public class AdvertiserDataServiceImpl implements AdvertiserDataService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
             MysqlClientManager.destroyQueryObjects(statement, null);
         }
     }
@@ -59,12 +60,20 @@ public class AdvertiserDataServiceImpl implements AdvertiserDataService {
         String sql = "DELETE from ads.advertisers where publisherId = " + publisher.id;
         PreparedStatement ps = null;
         System.out.println("Deleting previous record for publisher " + publisher.url);
+        Connection con = null;
         try {
-            ps = connection.prepareStatement(sql);
+            con = MysqlClientManager.createConnection();
+            ps = con.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
             MysqlClientManager.destroyQueryObjects(ps, null);
         }
     }
