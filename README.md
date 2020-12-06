@@ -69,7 +69,13 @@
   PRIMARY KEY (`id`)
 )
 
+##Queries 
+1. List of unique advertisers on a website
+>select distinct(name) from advertisers where publisherId = (select id from publishers where url = 'ealingtimes.co.uk');
+2. List of websites that contain a given advertiser
+>select * from publishers where id in (select publisherId from advertisers where name = 'google.com')
 
-
-
-
+3.List of all websites that contain a given advertiserId
+> select * from publishers where id in (select publisherId from advertisers where advertiserId = 108933);
+4. List of all unique advertisers
+>select distinct(name) from advertisers;
