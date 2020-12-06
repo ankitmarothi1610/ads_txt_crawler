@@ -79,7 +79,7 @@ public class CrawlerImpl {
                     continue;
                 }
                 Advertiser advertiser = AdvertiserHelper.createAdvertiserObject(line);
-                int i = 0;
+                int i = 1;
                 if (advertiser != null) {
                     advertiserList.add(advertiser);
                     i++;
@@ -112,7 +112,8 @@ public class CrawlerImpl {
             HttpURLConnection con =
                     (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("HEAD");
-            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+            int response = con.getResponseCode();
+            return (response == HttpURLConnection.HTTP_OK || response == HttpURLConnection.HTTP_NOT_MODIFIED);
         } catch (IOException e) {
             e.printStackTrace();
             return false;

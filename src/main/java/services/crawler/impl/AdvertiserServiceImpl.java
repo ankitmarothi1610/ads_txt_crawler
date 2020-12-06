@@ -6,7 +6,6 @@ import data.impl.AdvertiserDataServiceImpl;
 import data.impl.PublisherDataServiceImpl;
 import db.MysqlClientManager;
 import helpers.AdvertiserHelper;
-import services.CrawlerImpl;
 import services.crawler.AdvertiserService;
 import services.publisher.impl.PublisherThreadImpl;
 
@@ -14,10 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 public class AdvertiserServiceImpl implements AdvertiserService {
     AdvertiserDataService advertiserDataService;
@@ -54,7 +50,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     @Override
     public void sourceAdsTxtForPublisherUrls() {
         ResultSet rs = publisherDataService.getIterablePublisherCrawlUrls();
-        int i = 1;
+        int i = 0;
         List<String> urls = new ArrayList<>(0);
         try {
             while (rs.next()) {
@@ -62,16 +58,19 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 i++;
                 if (i == AdvertiserHelper.FETCH_SIZE) {
                     crawlPublisherUrls(urls);
-                    i = 1;
+                    i = 0;
+                    urls.clear();
                 }
             }
             if (i > 0) {
                 crawlPublisherUrls(urls);
+                urls.clear();
             }
         } catch(SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
             MysqlClientManager.destroyQueryObjects(null, rs);
+//            crawlerThreadPool.
         }
     }
 
@@ -86,13 +85,16 @@ public class AdvertiserServiceImpl implements AdvertiserService {
             futureList.add(result);
             threadCount++;
         }
-        for(Future<String> future : futureList) {
-            try {
-                System.out.println("Future result is - " + " - " + future.get() + "; And Task done is " + future.isDone());
-            }
-            catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
+//        for(Future<String> future : futureList) {
+//            try {
+//                if (future.isDone()) {
+//                    System.out.println("Future result is - " +  future.get());
+//                } else {
+//                    System.out.println("Waiting on future - " +  future.get());
+//                }
+//            } catch (InterruptedException | ExecutionException ie) {
+//                ie.printStackTrace();
+//            }
+//        }
     }
 }

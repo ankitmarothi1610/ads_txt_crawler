@@ -24,9 +24,17 @@ public class CrawlerThreadImpl implements Callable<String> {
 
     @Override
     public String call() throws Exception {
+        System.out.println("Downloading file for thread " + threadid + " url " + url);
         String localFilePath = crawler.downloadFile(url);
-        crawler.sourceFile(localFilePath);
-        publisherDataService.markProcessed(url);
+        if (localFilePath != null) {
+            System.out.println("Sourcing file for thread " + threadid + " url " + url);
+            crawler.sourceFile(localFilePath);
+            System.out.println("Marking processed for thread " + threadid + " url " + url);
+            publisherDataService.markProcessed(url);
+        } else {
+            System.out.println("Marking not Found for thread " + threadid + " url " + url);
+            publisherDataService.markNotFound(url);
+        }
         return url;
     }
 }

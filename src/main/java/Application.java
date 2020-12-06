@@ -44,8 +44,8 @@ public class Application {
     public static void main(String args[]) {
         Application app = new Application();
         app.tesDBConnection();
-        PublisherService publisherService = new PublisherServiceImpl();
-        publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
+//        PublisherService publisherService = new PublisherServiceImpl();
+//        publisherService.addPublishersFromFile("src/main/resources/publishers.txt");
         AdvertiserService advertiserService = new AdvertiserServiceImpl();
         advertiserService.sourceAdsTxtForPublisherUrls();
         System.exit(0);

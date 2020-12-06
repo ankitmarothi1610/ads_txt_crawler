@@ -2,7 +2,6 @@ package db;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
 public class MysqlClientManager {
@@ -11,8 +10,8 @@ public class MysqlClientManager {
     private static String database = "ads";
     private static String userName = "root";
     private static String password = "ankiT@123";
-    private static int MIN_IDLE_CONNECTIONS = 5;
-    private static int MAX_IDLE_CONNECTIONS = 10;
+    private static int MIN_IDLE_CONNECTIONS = 50;
+    private static int MAX_IDLE_CONNECTIONS = 200;
     private static int MAX_PREPARED_STATEMENTS = 10000;
 
     private static String getConnectionUrl() {

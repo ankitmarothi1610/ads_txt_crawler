@@ -9,4 +9,5 @@ public interface PublisherDataService {
     int bulkUpdatePublishers(List<Publisher> publisherList);
     ResultSet getIterablePublisherCrawlUrls();
     void markProcessed(String url);
+    void markNotFound(String url);
 }

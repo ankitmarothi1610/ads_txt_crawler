@@ -12,11 +12,11 @@ import java.util.List;
 public class AdvertiserDataServiceImpl implements AdvertiserDataService {
     Connection connection;
     public AdvertiserDataServiceImpl() {
-        try {
-            connection = MysqlClientManager.getConnection();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        }
+//        try {
+            connection = MysqlClientManager.createConnection();
+//        } catch (SQLException sqlException) {
+//            sqlException.printStackTrace();
+//        }
     }
 
     @Override
@@ -47,6 +47,11 @@ public class AdvertiserDataServiceImpl implements AdvertiserDataService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         } finally {
+            try {
+                connection.close();
+            } catch(SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
             MysqlClientManager.destroyQueryObjects(statement, null);
         }
     }

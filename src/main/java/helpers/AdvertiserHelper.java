@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import models.Advertiser;
 
 public class AdvertiserHelper {
-    public static int FETCH_SIZE = 100;
+    public static int FETCH_SIZE = 200;
 
     public static Advertiser createAdvertiserObject(String line) {
         String tokens[] = line.split(",");
