@@ -10,30 +10,30 @@ public class MysqlClientManager {
     private static String database = "ads";
     private static String userName = "root";
     private static String password = "ankiT@123";
-    private static int MIN_IDLE_CONNECTIONS = 50;
-    private static int MAX_IDLE_CONNECTIONS = 200;
+    private static int MIN_IDLE_CONNECTIONS = 500;
+    private static int MAX_IDLE_CONNECTIONS = 2000;
     private static int MAX_PREPARED_STATEMENTS = 10000;
 
-    private static String getConnectionUrl() {
-        StringBuilder connectionStr = new StringBuilder();
-        connectionStr.append(baseUrl);
-        connectionStr.append(database).append("?");
-        connectionStr.append("user=").append(userName).append("&");
-        connectionStr.append("password=").append(password);
-        return connectionStr.toString();
-    }
+//    private static String getConnectionUrl() {
+//        StringBuilder connectionStr = new StringBuilder();
+//        connectionStr.append(baseUrl);
+//        connectionStr.append(database).append("?");
+//        connectionStr.append("user=").append(userName).append("&");
+//        connectionStr.append("password=").append(password);
+//        return connectionStr.toString();
+//    }
 
-    public static Connection createConnection() {
-        Connection connection = null;
-
-        System.out.println("The connection string is " + getConnectionUrl());
-        try {
-            connection = DriverManager.getConnection(getConnectionUrl());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        }
-        return connection;
-    }
+//    public static Connection createConnection() {
+//        Connection connection = null;
+//
+//        System.out.println("The connection string is " + getConnectionUrl());
+//        try {
+//            connection = DriverManager.getConnection(getConnectionUrl());
+//        } catch (SQLException sqlException) {
+//            sqlException.printStackTrace();
+//        }
+//        return connection;
+//    }
 
     private static BasicDataSource createConnectionPool() {
         if (ds == null) {

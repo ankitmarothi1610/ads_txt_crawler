@@ -58,7 +58,6 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         ResultSet rs = null;
         PreparedStatement stmt = null;
         System.out.println("Query to get Publisher records " + sql);
-        connection = MysqlClientManager.createConnection();
         try {
             stmt = connection.prepareStatement(sql);
             stmt.setFetchSize(PublisherHelper.FETCH_SIZE);
@@ -71,7 +70,6 @@ public class PublisherDataServiceImpl implements PublisherDataService {
 
     public void markTrue(String url, String field) {
         String sql = "UPDATE ads.publishers set " + field + " = true WHERE url = ?";
-        connection = MysqlClientManager.createConnection();
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
