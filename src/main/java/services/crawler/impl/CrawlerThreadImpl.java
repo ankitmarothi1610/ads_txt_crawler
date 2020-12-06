@@ -29,10 +29,10 @@ public class CrawlerThreadImpl implements Callable<String> {
             System.out.println("Sourcing file for thread " + threadid + " url " + url);
             crawler.sourceFile(localFilePath);
             System.out.println("Marking processed for thread " + threadid + " url " + url);
-            publisherDataService.markProcessed(url);
+            publisherDataService.markTrue(url, "processed");
         } else {
             System.out.println("Marking not Found for thread " + threadid + " url " + url);
-            publisherDataService.markNotFound(url);
+            publisherDataService.markTrue(url, "notFound");
         }
         return url;
     }

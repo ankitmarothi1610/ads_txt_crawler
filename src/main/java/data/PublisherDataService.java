@@ -8,6 +8,5 @@ import java.util.List;
 public interface PublisherDataService {
     int bulkUpdatePublishers(List<Publisher> publisherList);
     ResultSet getIterablePublisherCrawlUrls();
-    void markProcessed(String url);
-    void markNotFound(String url);
+    void markTrue(String url, String field);
 }

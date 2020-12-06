@@ -63,32 +63,10 @@ public class PublisherDataServiceImpl implements PublisherDataService {
         return rs;
     }
 
-    public void markProcessed(String url) {
-        String sql = "UPDATE ads.publishers set processed = true WHERE url = ?";
+    public void markTrue(String url, String field) {
+        String sql = "UPDATE ads.publishers set " + field + " = true WHERE url = ?";
         connection = MysqlClientManager.createConnection();
         PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, url);
-            System.out.println("Query to mark urls as processed: " + preparedStatement);
-            preparedStatement.executeUpdate();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        } finally {
-            if (preparedStatement != null)
-                MysqlClientManager.destroyQueryObjects(preparedStatement, null);
-            try {
-                connection.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
-        }
-    }
-
-    public void markNotFound(String url) {
-        String sql = "UPDATE ads.publishers set notFound = true WHERE url = ?";
-        PreparedStatement preparedStatement = null;
-        connection = MysqlClientManager.createConnection();
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, url);
