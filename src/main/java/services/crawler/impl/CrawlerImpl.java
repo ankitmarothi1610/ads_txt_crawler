@@ -121,7 +121,7 @@ public class CrawlerImpl {
             try {
                 response = con.getResponseCode();
             } catch (UnknownHostException uhe) {
-                System.out.println("Host " + url + "/ads.txt not found");
+                System.out.println("Host " + url + " not found");
             } catch (ConnectException ce) {
                 System.out.println("Could not connect to host " + url);
             } catch (SSLHandshakeException se) {

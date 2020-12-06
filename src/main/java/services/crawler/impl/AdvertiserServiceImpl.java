@@ -68,18 +68,22 @@ public class AdvertiserServiceImpl implements AdvertiserService {
 
     public void sourceBatch(int max, int min) {
         List<Publisher> publisherList = publisherDataService.getRecordsBetweenIds(max, min);
-        for(Publisher publisher: publisherList) {
-            crawlPublisherUrls(publisher);
-        }
+        crawlPublisherUrls(publisherList);
     }
 
-    public void crawlPublisherUrls(Publisher publisher) {
-        System.out.println("Submitting processing for url " + publisher.url);
-        Future<String> result = CrawlerThreadPoolImpl
-                .getInstance()
-                .submit(new CrawlerThreadImpl(publisher));
+    public void crawlPublisherUrls(List<Publisher> publisherList) {
+        List<Future<String>> futureList = new ArrayList<>();
+        for(Publisher publisher: publisherList) {
+            System.out.println("Submitting processing for url " + publisher.url);
+            Future<String> result = CrawlerThreadPoolImpl
+                    .getInstance()
+                    .submit(new CrawlerThreadImpl(publisher));
+            futureList.add(result);
+        }
         try {
-            System.out.println("Future is " + result.isDone() + " and result is " + result.get());
+            for (Future<String> future: futureList) {
+                System.out.println("Future is " + future.isDone() + " and result is " + future.get());
+            }
         } catch (InterruptedException | ExecutionException ie) {
             ie.printStackTrace();
         }
